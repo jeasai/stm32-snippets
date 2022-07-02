@@ -48,3 +48,34 @@ while (1)
 screen /dev/ttyACM1 115200
 ```
 
+With DMA
+--------
+
+![usart2 dma config](/3-uart/uart_dma_cfg.png?raw=true "usart2 DMA config")
+![usart2 int config](/3-uart/uart_dma_int.png?raw=true "usart2 interruption config")
+
+```c
+/* USER CODE BEGIN 0 */
+char rxbuffer[10];
+char txbuffer[] = "Hello, DMA\r\n";
+/* USER CODE END 0 */
+```
+
+```c
+  /* USER CODE BEGIN WHILE */
+  HAL_UART_Receive_DMA(&huart2, rxbuffer, 10);
+  while (1)
+  {
+    HAL_UART_Transmit_DMA(&huart2, txbuffer, 14);
+    HAL_Delay(1000);
+    /* USER CODE END WHILE */
+```
+
+```c
+/* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+    HAL_UART_Transmit_DMA(&huart2, rxbuffer, 10);
+    HAL_UART_Receive_DMA(&huart2, rxbuffer, 10);
+}
+/* USER CODE END 4 */
+```
